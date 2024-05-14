@@ -12,18 +12,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Install and load tidyverse packages
 ```{r, echo=FALSE}
-## install.packages("tidyverse") # Delete this line once installed
-library("tidyverse")
+## install.packages("tidyverse") # install the package, is necessary to do it only once
+library("tidyverse") #load the package 
 ```
 
-
 # Load the data (mpg is built into ggplot2)
+For some explanation on the data, the displ = engine size od the cars in liters and hwy = car's fuel efficiency in miles per galon (mpg)
+
 ```{r}
 data(mpg)
 ```
 
 
 # Quick data checks
+Entender que siginfica cada cosa de estas. 
 ```{r}
 head(mpg)
 glimpse(mpg)
@@ -31,10 +33,11 @@ summary(mpg)
 ```
 
 
-# Create first plot
+# Create first plot 
+We created a scatter plot with ggplot2 (point graph) with the `geom_point` layer. 
 ```{r}
 ggplot(data = mpg) + 
-  geom_point(mapping = aes(x = disp, y = hwy))
+  geom_point(mapping = aes(x = displ, y = hwy)) #geom_point is the point layer for the scatter plot
 ```
 
 The plot shows a negative relationship between engine size (displ) and fuel efficiency (hwy). In other words, cars with big engines use more fuel. What does this say about fuel efficiency and engine size?
@@ -43,6 +46,7 @@ The plot shows a negative relationship between engine size (displ) and fuel effi
 
 # Understanding grammar of graphics
 What happens if we just try to run ggplot on its own?
+ANS: it just created the box for the plot but needs pecific parameters to create the graph and a dataset
 ```{r}
 ggplot() 
 # Or with just the data specified?
@@ -51,7 +55,7 @@ ggplot(data = mpg)
 
 We need to map some aesthetics!!
 
-# When you’re creating a plot, you essentially need two attributes of a plot: a geom and aesthetics.
+# When you’re creating a plot, you essentially need two attributes of a plot: a geom and aesthetics (the size, shape and color).
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, colour = class))
@@ -71,6 +75,7 @@ ggplot(data = mpg) +
 ```
 Note the warning!!!
 
+The warning is suggesting me that using size for a discrete variable might not be the beset way to get my result. Is no the best way to represent class in this data-set. 
 
 # Change transparency (alpha) by class
 ```{r}
@@ -79,13 +84,14 @@ ggplot(data = mpg) +
 ```
 Another warning!!
 Question: When would using alpha (or size be appropriate??)
+ANS: would not be appropriate for the type of variable that class is because is not continuos. 
 
 # Change point shape by class:
 ```{r}
 ggplot(data = mpg) + 
   geom_point(mapping = aes(x = displ, y = hwy, shape = class))
 ```
-
+Also a warning saying that the shapes can only be used for 6 discrite classes and also that the data has some missing values and this ones weren't plot. 
 
 # Make all points blue
 ```{r}
