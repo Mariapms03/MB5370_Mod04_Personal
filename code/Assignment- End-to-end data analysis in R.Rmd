@@ -1,5 +1,6 @@
 ---
 title: "Assignment: End-to-end data analysis in R"
+author: "Maria Paula Munoz"
 output: html_document
 date: "2024-05-16"
 ---
@@ -8,22 +9,13 @@ date: "2024-05-16"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+In this assignment, we will use real-world marine data collected as part of Queensland fisheries QFISH database and apply the tidyverse knowledge we have gained during the module, this includes making the data tidy and the data visualization. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### Data used in the assigment 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+To obtain the data we used the data collected as part of Queensland fisheries QFISH database (QFish) found in their website (https://qfish.fisheries.qld.gov.au/query/number-caught-by-area-calendar-year-and-species-group/table). 
 
-```{r cars}
-summary(cars)
-```
+Then it was downloaded in a CSV format (comma-separated values). 
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+ 
