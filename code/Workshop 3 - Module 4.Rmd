@@ -93,9 +93,210 @@ ggplot(table1, aes(year, cases)) +
 
 ### 4.5 Pivoting data to make it tidy 
 
+Using `pivot_longer()` example wiht the data: 
+The billboard dataset records the billboard rank of songs in the year 2000.
 ```{r}
+#dataset 
+billboard
+#> # A tibble: 317 × 79
+#>   artist       track               date.entered   wk1   wk2   wk3   wk4   wk5
+#>   <chr>        <chr>               <date>       <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 2 Pac        Baby Don't Cry (Ke... 2000-02-26      87    82    72    77    87
+#> 2 2Ge+her      The Hardest Part O... 2000-09-02      91    87    92    NA    NA
+#> 3 3 Doors Down Kryptonite          2000-04-08      81    70    68    67    66
+#> 4 3 Doors Down Loser               2000-10-21      76    76    72    69    67
+#> 5 504 Boyz     Wobble Wobble       2000-04-15      57    34    25    17    17
+#> 6 98^0         Give Me Just One N... 2000-08-19      51    39    34    26    26
+#> # ℹ 311 more rows
+#> # ℹ 71 more variables: wk6 <dbl>, wk7 <dbl>, wk8 <dbl>, wk9 <dbl>, ...
+```
 
+Now we used `pivot_longer()` to change the data set of billboard into long format and have week as a column and then rank as a column. 
+```{r}
+billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank"
+  )
+```
+
+Our long format data set now has NA's because not all songs were present each week. So the NA’s were forced to exist because of the structure of the dataset not because they are actually unknown. Therefore, we can simply ask `pivot_longer` to remove them by adding the argument `values_drop_na = TRUE` as shown below:
+
+```{r}
+billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank",
+    values_drop_na = TRUE #remove NAs from the dataset
+  )
+```
+
+#### 4.5.2 Pivoting longer
+
+Creating a dataframe 
+
+```{r}
+df <- tribble(
+  ~id,  ~bp1, ~bp2,
+   "A",  100,  120,
+   "B",  140,  115,
+   "C",  120,  125
+)
+```
+
+Making the dataframe longer
+
+```{r}
+df |> 
+  pivot_longer(
+    cols = bp1:bp2,
+    names_to = "measurement",
+    values_to = "value"
+  )
+```
+
+#### 4.5.3 Widening datasets
+Here we will use the `pivot_wider()` to covert a dataframe into wide format, is less common to use but needed sometiemes as we will see in the next example. 
+
+We’ll use an example from R4DS to explore pivot_wider() looking at the cms_patient_experience dataset from the Centers of Medicare and Medicaid.
+```{r}
+#dataframe
+cms_patient_experience
+#> # A tibble: 500 × 5
+#>   org_pac_id org_nm                     measure_cd   measure_title   prf_rate
+#>   <chr>      <chr>                      <chr>        <chr>              <dbl>
+#> 1 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_1  CAHPS for MIPS...       63
+#> 2 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_2  CAHPS for MIPS...       87
+#> 3 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_3  CAHPS for MIPS...       86
+#> 4 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_5  CAHPS for MIPS...       57
+#> 5 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_8  CAHPS for MIPS...       85
+#> 6 0446157747 USC CARE MEDICAL GROUP INC CAHPS_GRP_12 CAHPS for MIPS...       24
+#> # ℹ 494 more rows
 
 ```
 
+See the complete set of values
+
+```{r}
+cms_patient_experience |> 
+  distinct(measure_cd, measure_title)
+```
+
+`pivot_wider()` has the opposite interface to `pivot_longer()`: instead of choosing new column names, we need to provide the existing columns that define the values (`values_from`) and the column name (`names_from`):
+
+```{r}
+cms_patient_experience |> 
+  pivot_wider(
+    names_from = measure_cd,
+    values_from = prf_rate
+  )
+```
+
+The above output doesn’t look quite right; we still seem to have multiple rows for each organization. That’s because, we also need to tell `pivot_wider()` which column or columns have values that uniquely identify each row; in this case those are the variables starting with `"org"`:
+
+```{r}
+cms_patient_experience |> 
+  pivot_wider(
+    id_cols = starts_with("org"),
+    names_from = measure_cd,
+    values_from = prf_rate
+  )
+```
+
+#### 4.5.4 Pivoting wider
+
+To understand what pivot_wider() does to our data, let’s once again use a simple example. This time we have two patients with id s A and B, and we have three blood pressure (bp) measurements from patient A and two from patient B:
+
+```{r}
+df <- tribble(
+  ~id, ~measurement, ~value,
+  "A",        "bp1",    100,
+  "B",        "bp1",    140,
+  "B",        "bp2",    115, 
+  "A",        "bp2",    120,
+  "A",        "bp3",    105
+)
+```
+
+We’ll take the names from the measurement column using the names_from() argument and the values from the value column using the values_from() argument:
+
+```{r}
+df |> 
+  pivot_wider(
+    names_from = measurement,
+    values_from = value
+  )
+```
+
+To start the pivoting process, pivot_wider() needs to first figure out what will go in the rows and columns. The new column names will be the unique values of measurement.
+
+```{r}
+df |> 
+  distinct(measurement) |> 
+  pull()
+```
+
+By default, the rows in the output are determined by all the variables that aren’t going into the new names or values. These are called the id_cols. Here there is only one column, but in general there can be any number.
+
+```{r}
+df |> 
+  select(-measurement, -value) |> 
+  distinct()
+```
+
+pivot_wider() then combines these results to generate an empty dataframe:
+
+```{r}
+df |> 
+  select(-measurement, -value) |> 
+  distinct() |> 
+  mutate(x = NA, y = NA, z = NA)
+```
+
+##### 4.5.5 Exercises
+
+```{r}
+#ANS here
+```
+
+#### 4.5.6 Separating and uniting data tables
+
+We need to split the rate column up into two variables: 1) cases and 2) population. separate() will take the name of the column we want to split and the names of the columns we want it split into. See the code below:
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"))
+```
+
+Separate columns with specific characters
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), sep = "/")
+```
+
+Notice the data types in table3 above. Both `case`s and `population` are listed as `character` (`<chr>`) types. This is a default of using `separate()`. However, since the values in those columns are actually numbers, we want to ask `separate()` to convert them to better types using `convert = TRUE`. Now you can see they are listed as integer types(`<int>`)
+
+```{r}
+table3 %>% 
+  separate(rate, into = c("cases", "population"), convert = TRUE)
+
+```
+
+Separate the last two digits of each year. This makes this data less tidy, but is useful in other cases, as you’ll see in a little bit.
+
+```{r}
+table3 %>% 
+  separate(year, into = c("century", "year"), sep = 2)
+```
+
+`Using unite():
+To perform the inverse of separate() we will use unite() to combine multiple columns into a single column. In the example below for table5, we use unite() to rejoin century and year columns. unite() takes a data frame, the name of the new variable and a set of columns to combine using dplyr::select(). 
+
+```{r}
+table5 %>% 
+  unite(new, century, year, sep = "")
+```
 
