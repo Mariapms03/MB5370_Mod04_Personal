@@ -9,13 +9,7 @@ date: "2024-05-16"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this assignment, we will use real-world marine data collected as part of Queensland fisheries QFISH database and apply the tidyverse knowledge we have gained during the module, this includes making the data tidy and the data visualization. 
 
-### Data used in the assigment 
-
-To obtain the data we used the data collected as part of Queensland fisheries QFISH database (QFish) found in their website (https://qfish.fisheries.qld.gov.au/query/number-caught-by-area-calendar-year-and-species-group/table). 
-
-Then it was downloaded in a CSV format (comma-separated values). 
 
 
  
