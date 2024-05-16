@@ -384,4 +384,27 @@ stocks |>
 
 ### 4.7 How can I import data into R?
 
+Here we will learn how to import different types of files with our data into R. 
+The most common type of file is CSV (comma-separated values)
+
+```r
+? read_csv
+students <- read_csv("C://data/students.csv")
+
+#To play with read_csv() let’s read it into R directly from the URL provided in the textbook (https://pos.it/r4ds-students-csv)
+
+students <- read_csv("https://pos.it/r4ds-students-csv")
+```
+
+You might also notice that the Student ID and Full Name columns are surrounded by backticks. That’s because they contain spaces, breaking R’s usual rules for variable names; they’re non-syntactic names (think back to our intro to programming workshop!). To refer to these variables, you need to surround them with backticks, `:
+
+```r
+students |> 
+  rename(
+    student_id = `Student ID`,
+    full_name = `Full Name`
+  )
+```
+
+### 4.8 Learning relational data
 
