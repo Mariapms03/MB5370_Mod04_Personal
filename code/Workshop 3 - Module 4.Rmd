@@ -300,3 +300,85 @@ table5 %>%
   unite(new, century, year, sep = "")
 ```
 
+### 4.6 Handling missing values
+
+Missing values are very common in datasets. I bet you’ve come across many of them, but how you handle them is a key way to separate you, as a trained marine data scientist, from someone who simply hacks away until it seems ok. Missing values are sometimes populated with NA or sometimes they could be simply missing altogether from the data (i.e. a blank cell, the worst!). 
+
+#### 4.6.1 Explicit missing values
+The way data is missing matters a lot when tidying your data, so think of it like this: An NA (explicit absence) indicates the presence of absent data, and a blank cell just indicates the absence of data (implicit absence). One you know for sure is a no data value, the other you have no idea!
+Let’s begin by exploring some tools for creating or eliminating explicit values, i.e. cells where you see an NA.
+
+```{r}
+treatment <- tribble(
+  ~person,           ~treatment, ~response,
+  "Derrick Whitmore", 1,         7,
+  NA,                 2,         10,
+  NA,                 3,         NA,
+  "Katherine Burke",  1,         4
+)
+```
+
+You can fill in these missing values with tidyr::fill(). It works like select(), taking a set of columns:
+
+```{r}
+treatment |>
+  fill(everything())
+```
+
+#### 4.6.2 Fixed values
+Sometimes missing values represent some fixed and known value, most commonly 0. You can use dplyr::coalesce() to replace them:
+
+```{r}
+x <- c(1, 4, 5, 7, NA)
+coalesce(x, 0)
+```
+
+And sometimes you’ll encounter the opposite problem where some other concrete value actually represents a missing value. This typically happens when data is generated from an older software that can’t properly represent missing values so it uses something like 99 or -999 in place of the missing value. You can fix this with `dplyr::na_if()`:
+
+```{r}
+x <- c(1, 4, 5, 7, -99)
+na_if(x, -99)
+```
+
+#### 4.6.3 NaN
+One special type of missing value worth mentioning is NaN or Not a Number. It typically behaves the same as NA but in some rare cases you may need to distinguish it using is.nan(x):
+
+NaN is most common when you performing a mathematical operation that has an indeterminate result.
+
+```{r}
+x <- c(NA, NaN)
+x * 10
+#> [1]  NA NaN
+x == 1
+#> [1] NA NA
+is.na(x)
+#> [1] TRUE TRUE
+```
+
+#### 4.6.4 Implicit missing values
+So far we’ve talked about missing values that are explicitly missing, i.e. you can see an NA in your data. But missing values can also be implicitly missing, if an entire row of data is simply absent from the data. Let’s illustrate the difference with a simple dataset that records the price of some stock each quarter:
+
+```{r}
+stocks <- tibble(
+  year  = c(2020, 2020, 2020, 2020, 2021, 2021, 2021),
+  qtr   = c(   1,    2,    3,    4,    2,    3,    4),
+  price = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+```
+
+This dataset has two missing observations:
+The price in the fourth quarter of 2020 is explicitly missing, because its value is NA.
+The price for the first quarter of 2021 is implicitly missing, because it simply does not appear in the dataset.
+
+Sometimes you want to make implicit missings explicit in order to have something physical to work with. In other cases, explicit missings are forced upon you by the structure of the data and you want to get rid of them. Remember how we did this when we used pivot_wider()?
+
+Here’s another example where if we pivot stocks wider to put the quarter in the columns, both missing values become explicit:
+
+```{r}
+stocks |>
+  pivot_wider(
+    names_from = qtr, 
+    values_from = price
+  )
+```
+
