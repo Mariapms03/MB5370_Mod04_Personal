@@ -39,4 +39,11 @@ First and foremost, she wants you to use your skills in R to help develop a map 
 
 Your task now is - using R - to make a map of copepods in relation to temperature. 
 
+#### Loading the data into R
+```{r message=FALSE, warning=FALSE}
+#load the copepod data into R studio
+library(readr)
+copepods_raw <- read_csv("../data/data-for-course/copepods_raw.csv")
+View(copepods_raw)
+```
 
