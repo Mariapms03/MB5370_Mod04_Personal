@@ -43,7 +43,33 @@ Your task now is - using R - to make a map of copepods in relation to temperatur
 ```{r message=FALSE, warning=FALSE}
 #load the copepod data into R studio
 library(readr)
-copepods_raw <- read_csv("../data/data-for-course/copepods_raw.csv")
-View(copepods_raw)
+dat <- read_csv("../data/data-for-course/copepods_raw.csv")
+View(dat)
+```
+
+##### 5.7.1 Check coordinates
+The first step to making our first map using ggplot2  is to plot the coordinates for the samples (segments of the CPR silks)
+
+```{r}
+library(ggplot2)
+ggplot(dat) + 
+  aes(x = longitude, y = latitude, color = richness_raw) +
+  geom_point()
+```
+
+So, now let’s look at the richness data (our main variable for analysis). This time we are going to visualize richness in a non-spatial way with latitude on the x-axis and richness on the y-axis. 
+You will soon note that it’s a fairly common part of the workflow to pop back and forth between spatial and non-spatial analyses. That’s one of the brilliant things about doing your spatial work alongside your analytical work in R.
+
+```{r}
+ggplot(dat, aes(x = latitude, y = richness_raw)) + 
+  stat_smooth() + 
+  geom_point()
+```
+
+### 5.8 Getting going with maps
+
+
+```{r}
+
 ```
 
