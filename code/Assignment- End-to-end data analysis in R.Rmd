@@ -12,4 +12,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
+
+#### Import data
+
+```{r}
+library(readr)
+shark_controlprogram <- read_csv("../data/shark-controlprogram.csv")
+View(shark_controlprogram)
+```
+
+#### Making the data tidy
+
+Removing NAs from our dataset to clean it 
+```{r}
+# Remove rows with any NA values using base R
+shark_clean <- na.omit(shark_controlprogram)
+```
+
  
