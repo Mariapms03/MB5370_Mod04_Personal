@@ -9,3 +9,34 @@ date: "2024-05-16"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+In this workshop we are going to learn how to use R to create maps and analyse spatial data. 
+R can also be used as a Geographic Information System (GIS). If you want to - and some do - you can uninstall ArcGIS and QGIS and start to work solely in R for spatial analysis. 
+
+#### Packages required
+
+```r
+# install and load your packages
+install.packages("sf") 
+install.packages("terra")
+install.packages("tmap")
+```
+
+```{r message=FALSE, warning=FALSE}
+#load into R library
+library(tidyverse)
+library(sf) # simple features
+library (terra) # for raster
+library(tmap) # Thematic maps are geographical maps in which spatial data distributions are visualized
+```
+
+
+### 5.5 Introduction to the problem
+Here we adapt A/Prof Brown’s statement of the problem. 
+
+You finally have a chance to meet one of your academic heroes. On meeting her, she mentions that she’s read your first PhD paper on zooplankton biogeography. She said she was particularly impressed with the extent of R analysis in your biogeography paper and goes on to suggest you collaborate on a new database she is ‘working with’.
+The database has extensive samples of copepod richness throughout Australia’s oceans and the Southern Ocean too. She has a hypothesis - that like many organisms, copepod species richness (which is the number of unique species) will be higher in warmer waters than cooler waters. But she needs help sorting out the data.
+First and foremost, she wants you to use your skills in R to help develop a map that could help you ‘get a look at’ whether this hypothesis is worth pursuing. 
+
+Your task now is - using R - to make a map of copepods in relation to temperature. 
+
+
