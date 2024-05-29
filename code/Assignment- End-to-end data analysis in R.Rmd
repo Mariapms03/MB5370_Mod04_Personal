@@ -6,27 +6,64 @@ date: "2024-05-16"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
 ```
 
+For this assignment, I've decided to use data from the Shark Control Program in Queensland (https://qfish.fisheries.qld.gov.au/query/number-caught-by-area-calendar-year-and-species-group/table). 
 
-
-
+I've already downloaded customized data for the information I need because the initial download contained many blank spaces and NAs. To address this, I cleaned the data on the website using the available functions before downloading.
 
 #### Import data
 
 ```{r}
 library(readr)
-shark_controlprogram <- read_csv("../data/shark-controlprogram.csv")
-View(shark_controlprogram)
+sharkdatacustom <- read_csv("../data/sharkdatacustom.csv")
 ```
 
-#### Making the data tidy
+#### Making the graphs 
 
-Removing NAs from our dataset to clean it 
+The following chunks show the packages used for this graphs
+
 ```{r}
-# Remove rows with any NA values using base R
-shark_clean <- na.omit(shark_controlprogram)
+library(tidyverse)
 ```
+
+For this QFISH analysis I've decided to make two graphs that are the following:
+
+1. Time Series Plot: I want to show the trend of the number of catches over the years for different species groups.
+2. Bar Plot: I want to show the total number of catches per species group per area.
+
+##### Code for the graphs 
+The following code shows the code I used to create the two graphs mentioned above. It includes specific packages if needed besides the tidyverse, and specific ggplot2 code for the specifics of the graph. 
+
+The first step to create my plots is filtering the rows whit the totals of the catch per group as I do not want them to be graphed because they do not correspond to a specific point in time. Also for the bar plot it would be a double count of the total catches per area. 
+
+```{r}
+# Filter out the rows that contain 'Total' in SpeciesGroup or Area
+filtered_data <- data %>% 
+  filter(!grepl("Total", SpeciesGroup) & !grepl("Total", Area))
+
+```
+
+```{r}
+#TIME SERIES GRAPH
+
+ggplot(filtered_data, aes(x = CalendarYear, y = NumberCaught, color = SpeciesGroup, group = SpeciesGroup)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~Area) +
+  labs(title = "Number of Catches Over Years by Species Group and Area",
+       x = "Year",
+       y = "Number Caught") +
+  theme_minimal()
+
+```
+
+
+
 
  
