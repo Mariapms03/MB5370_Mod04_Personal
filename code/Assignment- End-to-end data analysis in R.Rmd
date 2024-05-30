@@ -24,7 +24,7 @@ library(readr)
 sharkdatacustom <- read_csv("../data/sharkdatacustom.csv")
 ```
 
-#### Making the graphs 
+### Making the graphs 
 
 The following chunks show the packages used for this graphs
 
@@ -32,37 +32,47 @@ The following chunks show the packages used for this graphs
 library(tidyverse)
 ```
 
-For this QFISH analysis I've decided to make two graphs that are the following:
+For this QFISH analysis I've decided to make two following graph:
 
 1. Time Series Plot: I want to show the trend of the number of catches over the years for different species groups.
-2. Bar Plot: I want to show the total number of catches per species group per area.
 
-##### Code for the graphs 
+#### Code for the graphs 
 The following code shows the code I used to create the two graphs mentioned above. It includes specific packages if needed besides the tidyverse, and specific ggplot2 code for the specifics of the graph. 
 
-The first step to create my plots is filtering the rows whit the totals of the catch per group as I do not want them to be graphed because they do not correspond to a specific point in time. Also for the bar plot it would be a double count of the total catches per area. 
+##### Filtering 
+The first step to create my plots is filtering out the rows whit the totals of the catch per group as I do not want them to be graphed because they do not correspond to a specific point in time. Also for the bar plot it would be a double count of the total catches per area. 
 
 ```{r}
 # Filter out the rows that contain 'Total' in SpeciesGroup or Area
-filtered_data <- data %>% 
+filtered_sharkcontroldata <- sharkdatacustom %>% 
   filter(!grepl("Total", SpeciesGroup) & !grepl("Total", Area))
 
 ```
 
+##### Time series plot 
+
+Specific packages needed 
 ```{r}
-#TIME SERIES GRAPH
-
-ggplot(filtered_data, aes(x = CalendarYear, y = NumberCaught, color = SpeciesGroup, group = SpeciesGroup)) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~Area) +
-  labs(title = "Number of Catches Over Years by Species Group and Area",
-       x = "Year",
-       y = "Number Caught") +
-  theme_minimal()
-
+library(ggplot2)  # creating plots
+library(dplyr)    # data manipulation
 ```
 
+Time Series Plot code 
+```{r}
+ggplot(filtered_sharkcontroldata , aes(x = CalendarYear, y = `NumberCaught Total`, color = SpeciesGroup, group = SpeciesGroup)) +
+  geom_line() +                             # Add lines connecting the points
+  geom_point() +                            # Add points at each data point
+  facet_wrap(~Area, scales = "free_y") +    # Create separate plots for each area with independent y scales
+  scale_x_continuous(breaks = seq(min(filtered_sharkcontroldata $CalendarYear, na.rm = TRUE), 
+                                  max(filtered_sharkcontroldata $CalendarYear, na.rm = TRUE), by = 2)) + # Set x-axis breaks  every 2 years so the years don't overlap
+  labs( x = "Year", 
+       y = "Number Caught") +               # Add labels 
+  theme_minimal() +                         # Use a minimal theme 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) # Rotate and adjust x-axis text                      
+
+# Save the plot with specified dimensions
+ggsave("time_series_plot.png", width = 14, height = 8)
+```
 
 
 
